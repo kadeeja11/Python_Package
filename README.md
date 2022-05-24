@@ -40,4 +40,4 @@ def display_candlestick(value):
 
 
 webbrowser.open('http://127.0.0.1:8050/')
-app.run_server(debug=True)
+app.run_server(debug=True,use_reloader=False)
