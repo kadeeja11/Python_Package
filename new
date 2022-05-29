@@ -1,0 +1,67 @@
+#Import the required libraries
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
+from dash import Dash, dcc, html, Input, Output
+import plotly.graph_objects as go
+import pandas as pd
+import webbrowser
+
+def func(filename):
+    app = Dash(__name__)
+
+    app.layout = html.Div([
+        html.H4('Apple stock candlestick chart'),
+        dcc.Checklist(
+            id='toggle-rangeslider',
+            options=[{'label': 'Include Rangeslider', 
+                      'value': 'slider'}],
+            value=['slider']
+        ),
+        dcc.Graph(id="graph"),
+    ])
+
+
+    @app.callback(
+        Output("graph", "figure"), 
+        Input("toggle-rangeslider", "value"))
+    def display_candlestick(value):
+        df = pd.read_csv(filename)
+        fig = go.Figure(go.Candlestick(
+            x=df['Date'],
+            open=df['Open'],
+            high=df['High'],
+            low=df['Low'],
+            close=df['Close']
+        ))
+
+        fig.update_layout(
+            xaxis_rangeslider_visible='slider' in value
+        )
+        
+        return fig
+    
+   # webbrowser.open('http://127.0.0.1:8050/')
+    webbrowser.open_new_tab('http://127.0.0.1:8050/')
+    app.run_server(debug=True,use_reloader=False)
+    
+
+
+#Create an instance of Tkinter Frame
+win = Tk()
+
+#Set the geometry of Tkinter Frame
+win.geometry("700x350")
+
+#Define a function for opening the Dialog box
+def open_prompt():
+    func(r'C:\Users\junai\Downloads\archive\ADANIPORTS.csv')
+
+
+#Create a Label widget
+Label(win, text= "ADANIPORTS").pack(pady=15)
+
+#Create a Button for opening a dialog Box
+ttk.Button(win, text= "Open", command= open_prompt).pack()
+
+win.mainloop()
